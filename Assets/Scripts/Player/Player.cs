@@ -16,6 +16,10 @@ public class Player : MonoBehaviour, IDamageable
 
     private float _horizontal, _vertical;
 
+
+
+    public int PlayerHealth;
+
     #region Unity Functions
     private void Update()
     {
@@ -46,8 +50,21 @@ public class Player : MonoBehaviour, IDamageable
     #endregion
 
     #region Damage
-    public void TakeDamage()
+    public void TakeDamage(int damage)
     {
+        PlayerHealth -= damage;
+    }
+
+    public void Destruct(float seconds)
+    {
+        StartCoroutine(StartDestruction(seconds));
+    }
+
+    public IEnumerator StartDestruction(float seconds)
+    {
+        ///To do - play animations
+        yield return new WaitForSeconds(seconds);
+        Destroy(gameObject);
     }
     #endregion
 }

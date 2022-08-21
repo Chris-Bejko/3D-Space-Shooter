@@ -4,5 +4,7 @@ using UnityEngine;
 
 public interface IDamageable 
 {
-    public void TakeDamage();
+    public void TakeDamage(int damage);
+
+    public void Destruct(float secondsToGetDestroyed);
 }
