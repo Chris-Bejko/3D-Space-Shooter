@@ -5,22 +5,33 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
 
+    public float ShootingCooldown;
+
+    public float TimeBetweenSameShot;
+
     [SerializeField]
     private Rigidbody _rigidbody;
+
     [SerializeField]
     private float _bulletForce;
+
     [SerializeField]
     private int _bulletDamage;
 
+    [SerializeField]
+    private float _timeToDisableAfterNoCollision;
+
     private void OnEnable()
     {
-        Shoot();
+        StartCoroutine(Shoot());
     }
 
-    private void Shoot()
+    private IEnumerator Shoot()
     {
-        Debug.LogError("Bullet Shooting");
-        _rigidbody.AddForce(transform.forward * _bulletForce);
+        _rigidbody.velocity = Vector3.forward * _bulletForce;
+        yield return new WaitForSeconds(_timeToDisableAfterNoCollision);
+        if (gameObject.activeInHierarchy)
+            gameObject.SetActive(false);
     }
 
     private void OnCollisionEnter(Collision collision)

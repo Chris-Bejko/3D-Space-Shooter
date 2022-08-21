@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IDamageable
 {
+    public int PlayerHealth;
+
+
     [SerializeField]
     private float _speed;
+
     [SerializeField]
     private Rigidbody _rigidbody;
+
     [SerializeField]
     private Vector3 _minBounds;
+
     [SerializeField]
     private Vector3 _maxBounds;
 
@@ -18,15 +24,16 @@ public class Player : MonoBehaviour, IDamageable
 
 
 
-    public int PlayerHealth;
     [SerializeField]
     private float _secondsToDestruct;
 
     [SerializeField]
     private int _totalBulletsSpawnPoints;
+
     [SerializeField]
     private Transform[] _spawnPoints;
-    
+
+
     #region Unity Functions
     private void Update()
     {
@@ -34,9 +41,7 @@ public class Player : MonoBehaviour, IDamageable
             return;
 
         GetInput();
-
-        if (Input.GetKeyDown(KeyCode.Space))
-            Shoot();
+        Shoot();
     }
 
     private void FixedUpdate()
@@ -50,7 +55,7 @@ public class Player : MonoBehaviour, IDamageable
     private void Move()
     {
         _rigidbody.velocity = (new Vector3(_horizontal, 0, _vertical) * Time.fixedDeltaTime * _speed);
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, _minBounds.x, _maxBounds.x), 
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, _minBounds.x, _maxBounds.x),
             transform.position.y,
             Mathf.Clamp(transform.position.z, _minBounds.z, _maxBounds.z));
     }
@@ -89,12 +94,30 @@ public class Player : MonoBehaviour, IDamageable
 
     public void Shoot()
     {
-        ///One left , and one right (2 bullets)
-        for (int i = 0; i < _totalBulletsSpawnPoints; i++) 
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            var temp = GameManager.Instance.bulletsPool.GetPooledObject();
-            temp.transform.position = _spawnPoints[i].position;
-            temp.SetActive(true); 
+            StartCoroutine(FireCoroutine());
+        }
+        else if(Input.GetKeyUp(KeyCode.Space))
+        {
+            StopAllCoroutines();
+        }
+    }
+
+    public IEnumerator FireCoroutine()
+    {
+        ///One left , and one right (2 bullets)
+        while (true)
+        {
+            GameObject temp = null;
+            for (int i = 0; i < _totalBulletsSpawnPoints; i++)
+            {
+                temp = GameManager.Instance.bulletsPool.GetPooledObject();
+                temp.transform.position = _spawnPoints[i].position;
+                temp.SetActive(true);
+                yield return new WaitForSeconds(temp.GetComponent<Bullet>().TimeBetweenSameShot);
+            }
+            yield return new WaitForSeconds(temp.GetComponent<Bullet>().ShootingCooldown);
         }
     }
 
