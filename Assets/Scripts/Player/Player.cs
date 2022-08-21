@@ -9,7 +9,9 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField]
     private Rigidbody _rigidbody;
     [SerializeField]
-    private Vector3 _bounds;
+    private Vector3 _minBounds;
+    [SerializeField]
+    private Vector3 _maxBounds;
 
 
     private float _horizontal, _vertical;
@@ -30,10 +32,10 @@ public class Player : MonoBehaviour, IDamageable
     #region Movement
     private void Move()
     {
-        _rigidbody.MovePosition(_rigidbody.position + new Vector3(_horizontal, 0, _vertical) * Time.fixedDeltaTime * _speed);
-        _rigidbody.position = new Vector3(Mathf.Clamp(_rigidbody.position.x, -_bounds.x, _bounds.x), 
-            Mathf.Clamp(_rigidbody.position.y, -_bounds.y, _bounds.y),
-            Mathf.Clamp(_rigidbody.position.z, -_bounds.z, _bounds.z));
+        _rigidbody.velocity = (new Vector3(_horizontal, 0, _vertical) * Time.fixedDeltaTime * _speed);
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, _minBounds.x, _maxBounds.x), 
+            transform.position.y,
+            Mathf.Clamp(transform.position.z, _minBounds.z, _maxBounds.z));
     }
 
     private void GetInput()
