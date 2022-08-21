@@ -19,11 +19,24 @@ public class Player : MonoBehaviour, IDamageable
 
 
     public int PlayerHealth;
+    [SerializeField]
+    private float _secondsToDestruct;
 
+    [SerializeField]
+    private int _totalBulletsSpawnPoints;
+    [SerializeField]
+    private Transform[] _spawnPoints;
+    
     #region Unity Functions
     private void Update()
     {
+        if (GameManager.Instance.IsPaused)
+            return;
+
         GetInput();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            Shoot();
     }
 
     private void FixedUpdate()
@@ -55,16 +68,35 @@ public class Player : MonoBehaviour, IDamageable
         PlayerHealth -= damage;
     }
 
-    public void Destruct(float seconds)
+    public int GetHealth()
     {
-        StartCoroutine(StartDestruction(seconds));
+        return PlayerHealth;
+    }
+    public void Destruct()
+    {
+        StartCoroutine(StartDestruction());
     }
 
-    public IEnumerator StartDestruction(float seconds)
+    public IEnumerator StartDestruction()
     {
         ///To do - play animations
-        yield return new WaitForSeconds(seconds);
-        Destroy(gameObject);
+        yield return new WaitForSeconds(_secondsToDestruct);
+        gameObject.SetActive(false);
     }
+    #endregion
+
+    #region Shooting
+
+    public void Shoot()
+    {
+        ///One left , and one right (2 bullets)
+        for (int i = 0; i < _totalBulletsSpawnPoints; i++) 
+        {
+            var temp = GameManager.Instance.bulletsPool.GetPooledObject();
+            temp.transform.position = _spawnPoints[i].position;
+            temp.SetActive(true); 
+        }
+    }
+
     #endregion
 }

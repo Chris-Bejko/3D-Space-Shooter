@@ -6,5 +6,7 @@ public interface IDamageable
 {
     public void TakeDamage(int damage);
 
-    public void Destruct(float secondsToGetDestroyed);
+    public void Destruct();
+
+    public int GetHealth();
 }

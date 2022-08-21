@@ -8,7 +8,12 @@ public class ObjectPool : MonoBehaviour
     public GameObject ObjectToPool;
     public int AmountToPool;
 
-    public void Start()
+
+    private void Start()
+    {
+        SpawnPool();
+    }
+    public void SpawnPool()
     {
         pooledObjects = new List<GameObject>();
         GameObject temp = null;
@@ -24,7 +29,7 @@ public class ObjectPool : MonoBehaviour
     {
         for(int i = 0; i < AmountToPool; i++)
         {
-            if (pooledObjects[i].activeInHierarchy)
+            if (!pooledObjects[i].activeInHierarchy)
             {
                 return pooledObjects[i];
             }
