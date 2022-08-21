@@ -9,10 +9,11 @@ public class ObjectPool : MonoBehaviour
     public int AmountToPool;
 
 
-    private void Start()
+    private void Awake()
     {
         SpawnPool();
     }
+
     public void SpawnPool()
     {
         pooledObjects = new List<GameObject>();

@@ -14,11 +14,16 @@ public class GameManager : MonoBehaviour
 
     public int Score { get; set; }
 
+    private void Start()
+    {
+        //EnableWaveChildren();
+
+        Debug.Log(wavesPools == null);
+    }
+
     private void Awake()
     {
         Instance = this;
-
-        EnableWaveChildren();
     }
 
     private void EnableWaveChildren()
@@ -27,6 +32,7 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < wavesPools[i].transform.childCount; j++)
             {
+                Debug.Log(wavesPools[i].transform.GetChild(j).gameObject.name);
                 wavesPools[i].transform.GetChild(j).gameObject.SetActive(true);
             }
         }
