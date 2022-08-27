@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
     }
 
     #region State Functions
-    private void HandleStateChange(GameState newState)
+    public void HandleStateChange(GameState newState)
     {
         gameState = newState;
 

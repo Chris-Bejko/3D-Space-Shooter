@@ -476,7 +476,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pooledObjects: []
   ObjectToPool: {fileID: 4393606652481290436, guid: b884c8302efe5ca4a9ad5e938366c62d, type: 3}
-  AmountToPool: 100
+  AmountToPool: 10000
 --- !u!4 &1559702177
 Transform:
   m_ObjectHideFlags: 0
@@ -523,7 +523,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waves:
   - {fileID: 11400000, guid: 983658ed06eb88c429f93ee35dece3ca, type: 2}
-  spawnTimer: 3
+  spawnTimer: 8
 --- !u!4 &1575676618
 Transform:
   m_ObjectHideFlags: 0
@@ -642,6 +642,10 @@ PrefabInstance:
     - target: {fileID: 8029689854072668552, guid: cbb3b2eae0c8ce143ae251ee4788c665, type: 3}
       propertyPath: _maxBounds.z
       value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8029689854072668552, guid: cbb3b2eae0c8ce143ae251ee4788c665, type: 3}
+      propertyPath: _minBounds.y
+      value: -5.93
       objectReference: {fileID: 0}
     - target: {fileID: 8029689854072668552, guid: cbb3b2eae0c8ce143ae251ee4788c665, type: 3}
       propertyPath: _spawnPoints.Array.size

@@ -5,11 +5,11 @@ public class EnemyConfig : ScriptableObject
 {
     public float MoveSpeed;
 
-    public Transform[] ShootPoints;
-
     public int Health;
 
     public int CollisionDamage;
 
     public float FiringDistance;
+
+    public float FiringCooldown;
 }

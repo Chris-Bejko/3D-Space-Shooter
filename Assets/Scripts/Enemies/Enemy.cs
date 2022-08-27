@@ -8,25 +8,28 @@ public class Enemy : MonoBehaviour, IDamageable
     private float _timeForDestruction;
 
     [SerializeField]
-    EnemyConfig _thisData;
+    private EnemyConfig _thisData;
 
+    [SerializeField]
+    private Transform[] firingPoints;
 
     private Transform _player;
 
-    private bool _alive;
+    private int _health;
 
-    private Transform[] firingPoints;
+    private BulletParent _bulletParent;
 
     private void Awake()
     {
         _player = GameManager.Instance.player.transform;
-        _alive = true;
-        firingPoints = _thisData.ShootPoints;
+        _health = _thisData.Health;
+        SetBulletParent(BulletParent.Enemy);
     }
 
     private void OnEnable()
     {
         StartCoroutine(Move());
+        StartCoroutine(Fire());
     }
 
     void Update()
@@ -37,6 +40,25 @@ public class Enemy : MonoBehaviour, IDamageable
         //Move();
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
+        if (damageable != null)
+        {
+            if (damageable.GetBulletParent() == _bulletParent)
+                return;
+
+            damageable.TakeDamage(_thisData.CollisionDamage);
+            
+            if (damageable.GetHealth() <= 0)
+                damageable.Destruct();
+        }
+
+        Destruct();
+    }
+
+    #region IDamageable
+
     public void Destruct()
     {
         StartCoroutine(DestroyShip());
@@ -46,30 +68,30 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         ///To-do: Play animations
         yield return new WaitForSeconds(_timeForDestruction);
-        _alive = false;
         gameObject.SetActive(false);
     }
 
     public int GetHealth()
     {
-        return _thisData.Health;
+        return _health;
     }
 
     public void TakeDamage(int damage)
     {
-        _thisData.Health -= damage;
+        _health -= damage;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public BulletParent GetBulletParent()
     {
-        IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
-        if (damageable != null)
-        {
-            damageable.TakeDamage(_thisData.CollisionDamage);
-        }
-
-        Destruct();
+        return _bulletParent;
     }
+
+    public void SetBulletParent(BulletParent parent)
+    {
+        _bulletParent = parent;
+    }
+
+    #endregion
 
     #region Functions
 
@@ -80,24 +102,29 @@ public class Enemy : MonoBehaviour, IDamageable
             var step = _thisData.MoveSpeed * Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, _player.position, step);
             transform.LookAt(_player.position);
-            Fire();
             yield return null;
         }
         Destruct();
     }
 
-    private void Fire()
+    private IEnumerator Fire()
     {
-        if (Vector3.Distance(_player.position, transform.position) >= _thisData.FiringDistance)
-            return;
+        yield return new WaitUntil(() => Vector3.Distance(_player.position, transform.position) <= _thisData.FiringDistance);
 
-        GameObject temp = null;
-        for(int i = 0; i < _thisData.ShootPoints.Length; i++)
+        while (Vector3.Distance(_player.position, transform.position) >= 0.01f)
         {
-            temp = GameManager.Instance.bulletsPool.GetPooledObject();
-            temp.transform.position = firingPoints[i].position;
-            temp.SetActive(true);
+            GameObject temp = null;
+            for (int i = 0; i < firingPoints.Length; i++)
+            {
+                temp = GameManager.Instance.bulletsPool.GetPooledObject();
+                temp.transform.position = firingPoints[i].position;
+                temp.GetComponent<Bullet>().SetBulletParent(_bulletParent);
+                temp.SetActive(true);
+            }
+            yield return new WaitForSeconds(_thisData.FiringCooldown);
         }
+
     }
+
     #endregion
 }

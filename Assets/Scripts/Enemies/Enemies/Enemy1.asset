@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec12d9887f62de84a9d4ecdd38d5aae4, type: 3}
   m_Name: Enemy1
   m_EditorClassIdentifier: 
-  MoveSpeed: 150
-  ShootPoints:
-  - {fileID: 6958592295490181790, guid: 5854887d8b6725f4eb3c12e9fdc0a8e2, type: 3}
-  Health: 150
+  MoveSpeed: 50
+  Health: 100
   CollisionDamage: 40
-  FiringDistance: 100
+  FiringDistance: 70
+  FiringCooldown: 2

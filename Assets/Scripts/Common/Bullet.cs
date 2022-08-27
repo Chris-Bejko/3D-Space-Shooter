@@ -20,7 +20,10 @@ public class Bullet : MonoBehaviour, IDamageable
     [SerializeField]
     private float _timeToDisableAfterNoCollision;
 
-    private int bulletHealth = 10;
+    private int _bulletHealth = 10;
+
+    private BulletParent _bulletParent;
+
 
     private void OnEnable()
     {
@@ -29,7 +32,10 @@ public class Bullet : MonoBehaviour, IDamageable
 
     private IEnumerator Shoot()
     {
-        _rigidbody.velocity = Vector3.forward * _bulletForce;
+        if (_bulletParent == BulletParent.Enemy)
+            _rigidbody.velocity = -Vector3.forward * _bulletForce;
+        else
+            _rigidbody.velocity = Vector3.forward * _bulletForce;
         yield return new WaitForSeconds(_timeToDisableAfterNoCollision);
         if (gameObject.activeInHierarchy)
             gameObject.SetActive(false);
@@ -43,19 +49,22 @@ public class Bullet : MonoBehaviour, IDamageable
 
         if (damageable != null)
         {
+            if (damageable.GetBulletParent() == _bulletParent)
+                return;
+
             damageable.TakeDamage(_bulletDamage);
 
             if (damageable.GetHealth() <= 0)
                 damageable.Destruct();
         }
 
-        TakeDamage(bulletHealth);
+        TakeDamage(_bulletHealth);
     }
 
     public void TakeDamage(int damage)
     {
-        bulletHealth -= damage;
-        if(bulletHealth <= 0) { Destruct(); }
+        _bulletHealth -= damage;
+        if(_bulletHealth <= 0) { Destruct(); }
     }
 
     public void Destruct()
@@ -66,6 +75,22 @@ public class Bullet : MonoBehaviour, IDamageable
 
     public int GetHealth()
     {
-        return bulletHealth;
+        return _bulletHealth;
     }
+
+    public BulletParent GetBulletParent()
+    {
+        return _bulletParent;
+    }
+
+    public void SetBulletParent(BulletParent newParent)
+    {
+        _bulletParent = newParent;
+    }
+}
+
+public enum BulletParent
+{
+    Player,
+    Enemy
 }

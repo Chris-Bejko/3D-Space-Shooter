@@ -21,7 +21,7 @@ public class Player : MonoBehaviour, IDamageable
 
     private float _horizontal, _vertical;
 
-
+    private BulletParent _bulletParent;
 
     [SerializeField]
     private float _secondsToDestruct;
@@ -34,6 +34,11 @@ public class Player : MonoBehaviour, IDamageable
 
 
     #region Unity Functions
+
+    private void Awake()
+    {
+        SetBulletParent(BulletParent.Player);
+    }
     private void Update()
     {
         if (GameManager.Instance.gameState == GameManager.GameState.Paused)
@@ -86,6 +91,7 @@ public class Player : MonoBehaviour, IDamageable
         ///To do - play animations
         yield return new WaitForSeconds(_secondsToDestruct);
         gameObject.SetActive(false);
+        GameManager.Instance.HandleStateChange(GameManager.GameState.Lost);
     }
     #endregion
 
@@ -112,11 +118,22 @@ public class Player : MonoBehaviour, IDamageable
             {
                 temp = GameManager.Instance.bulletsPool.GetPooledObject();
                 temp.transform.position = _spawnPoints[i].position;
+                temp.GetComponent<Bullet>().SetBulletParent(_bulletParent);
                 temp.SetActive(true);
                 yield return new WaitForSeconds(temp.GetComponent<Bullet>().TimeBetweenSameShot);
             }
             yield return new WaitForSeconds(temp.GetComponent<Bullet>().ShootingCooldown);
         }
+    }
+
+    public BulletParent GetBulletParent()
+    {
+        return _bulletParent;
+    }
+
+    public void SetBulletParent(BulletParent parent)
+    {
+        _bulletParent = parent;
     }
 
     #endregion
