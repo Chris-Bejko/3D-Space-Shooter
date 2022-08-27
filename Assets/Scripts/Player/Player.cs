@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour, IDamageable
@@ -37,7 +36,7 @@ public class Player : MonoBehaviour, IDamageable
     #region Unity Functions
     private void Update()
     {
-        if (GameManager.Instance.IsPaused)
+        if (GameManager.Instance.gameState == GameManager.GameState.Paused)
             return;
 
         GetInput();
@@ -54,10 +53,10 @@ public class Player : MonoBehaviour, IDamageable
     #region Movement
     private void Move()
     {
-        _rigidbody.velocity = (new Vector3(_horizontal, 0, _vertical) * Time.fixedDeltaTime * _speed);
+        _rigidbody.velocity = (new Vector3(_horizontal, _vertical) * Time.fixedDeltaTime * _speed);
         transform.position = new Vector3(Mathf.Clamp(transform.position.x, _minBounds.x, _maxBounds.x),
-            transform.position.y,
-            Mathf.Clamp(transform.position.z, _minBounds.z, _maxBounds.z));
+             Mathf.Clamp(transform.position.y, _minBounds.y, _maxBounds.y),
+           transform.position.z);
     }
 
     private void GetInput()
@@ -106,7 +105,6 @@ public class Player : MonoBehaviour, IDamageable
 
     public IEnumerator FireCoroutine()
     {
-        ///One left , and one right (2 bullets)
         while (true)
         {
             GameObject temp = null;

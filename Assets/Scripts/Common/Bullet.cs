@@ -1,8 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour, IDamageable
 {
 
     public float ShootingCooldown;
@@ -21,6 +20,8 @@ public class Bullet : MonoBehaviour
     [SerializeField]
     private float _timeToDisableAfterNoCollision;
 
+    private int bulletHealth = 10;
+
     private void OnEnable()
     {
         StartCoroutine(Shoot());
@@ -34,7 +35,7 @@ public class Bullet : MonoBehaviour
             gameObject.SetActive(false);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider collision)
     {
         _rigidbody.AddExplosionForce(_bulletForce, transform.position, 2);
 
@@ -48,6 +49,23 @@ public class Bullet : MonoBehaviour
                 damageable.Destruct();
         }
 
+        TakeDamage(bulletHealth);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        bulletHealth -= damage;
+        if(bulletHealth <= 0) { Destruct(); }
+    }
+
+    public void Destruct()
+    {
+        ///Play destroy animation
         gameObject.SetActive(false);
+    }
+
+    public int GetHealth()
+    {
+        return bulletHealth;
     }
 }

@@ -1,66 +1,50 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WaveManager : MonoBehaviour
 {
 
-    public List<GameObject> TotalWavesSpawned = new List<GameObject>();
+    public Waves[] waves;
 
-    public List<GameObject> StaticWavesSpawned = new List<GameObject>();
-    public float offset;
+    public float spawnTimer = 2f;
 
-    public int CurrentWaveIndex;
-
-    [SerializeField] 
-    private int _maxWavesToSpawn; 
-
-    [SerializeField]
-    private Transform _playerTransform;
-
-    private int wavePoolCount;
-
-    private void Start()
+    private void Awake()
     {
-        for(int i = 0; i < StaticWavesSpawned.Count; i++)
-        {
-            TotalWavesSpawned.Add(StaticWavesSpawned[i]);
-        }
-        CurrentWaveIndex = TotalWavesSpawned.Count - 1;
-        wavePoolCount = GameManager.Instance.wavesPools.Length;
+        GameManager.OnGameStateChanged += OnGameStateChange;
     }
 
-
-    private void Update()
+    private void OnDisable()
     {
-        SpawnWaves();
+        GameManager.OnGameStateChanged -= OnGameStateChange;
+    }
+    private void OnGameStateChange(GameManager.GameState state)
+    {
+        if (state == GameManager.GameState.Playing)
+            StartCoroutine(SpawnWaves());
+        else
+            StopCoroutine(SpawnWaves());
     }
 
-    private void SpawnWaves()
+    private IEnumerator SpawnWaves()
     {
-        if (_playerTransform.position.x <= (TotalWavesSpawned[CurrentWaveIndex].transform.position.x) - offset && TotalWavesSpawned.Count <= _maxWavesToSpawn)
+        while (GameManager.Instance.gameState == GameManager.GameState.Playing)
         {
-            GameObject nextTile = GameManager.Instance.wavesPools[Random.Range(0, wavePoolCount)].GetPooledObject();
-
-            Debug.Log(nextTile.name);
-
-            TotalWavesSpawned.Add(nextTile);  
-
-            nextTile.transform.position = TotalWavesSpawned[CurrentWaveIndex].transform.position - new Vector3(10, 0);
-
-            nextTile.SetActive(true);
-
-            CurrentWaveIndex++;
-        }
-        else if (TotalWavesSpawned.Count > _maxWavesToSpawn)
-        {
-            var toBeRemoved = TotalWavesSpawned[CurrentWaveIndex - _maxWavesToSpawn];
-
-            toBeRemoved.SetActive(false);
-
-            TotalWavesSpawned.Remove(toBeRemoved);
-
-            CurrentWaveIndex = TotalWavesSpawned.Count - 1;
+            int index = Random.Range(0, waves.Length);
+            var currentWave = waves[index];
+            yield return StartCoroutine(SpawnEnemiesInWave(currentWave, index));
+            yield return new WaitForSeconds(spawnTimer);
         }
     }
+
+    private IEnumerator SpawnEnemiesInWave(Waves currentWave, int index)
+    {
+        for (int i = 0; i < currentWave.TotalEnemies; i++)
+        {
+            var temp = Instantiate(currentWave.EnemiesPrefabs[i]);
+            temp.transform.position = GameManager.Instance.spawnPoints[index].GetChild(i).position;
+            yield return new WaitForSeconds(currentWave.TimeBetweenSpawns);
+        }
+    }
+
+
 }
