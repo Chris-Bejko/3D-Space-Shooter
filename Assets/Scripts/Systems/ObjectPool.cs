@@ -8,7 +8,7 @@ public class ObjectPool : MonoBehaviour
     public int AmountToPool;
 
 
-    private void Awake()
+    private void Start()
     {
         SpawnPool();
     }

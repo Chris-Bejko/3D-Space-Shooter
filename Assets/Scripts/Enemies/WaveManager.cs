@@ -19,7 +19,7 @@ public class WaveManager : MonoBehaviour
     }
     private void OnGameStateChange(GameManager.GameState state)
     {
-        if (state == GameManager.GameState.Playing)
+        if (state == GameManager.GameState.Playing && GameManager.Instance.previousGameState != GameManager.GameState.Paused)
             StartCoroutine(SpawnWaves());
         else
             StopCoroutine(SpawnWaves());
@@ -40,8 +40,9 @@ public class WaveManager : MonoBehaviour
     {
         for (int i = 0; i < currentWave.TotalEnemies; i++)
         {
-            var temp = Instantiate(currentWave.EnemiesPrefabs[i]);
-            temp.transform.position = GameManager.Instance.spawnPoints[index].GetChild(i).position;
+            var temp = GameManager.Instance.EnemiesPool[currentWave.EnemiesPrefabs[i].GetComponent<Enemy>().ID].GetPooledObject();
+            temp.transform.position = GameManager.Instance.SpawnPoints[index].GetChild(i).position;
+            temp.SetActive(true);
             yield return new WaitForSeconds(currentWave.TimeBetweenSpawns);
         }
     }

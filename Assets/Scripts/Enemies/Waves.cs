@@ -7,7 +7,5 @@ public class Waves : ScriptableObject
 
     public int TotalEnemies;
 
-    public Transform[] EnemySpawnPoint;
-
     public float TimeBetweenSpawns;
 }

@@ -228,14 +228,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a674e83d1fc6728449962cbc40c218a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerHealth: 100
   _speed: 500
   _rigidbody: {fileID: 8029689854072668555}
-  _minBounds: {x: -6.5, y: -2.8, z: -20}
-  _maxBounds: {x: 12.5, y: 5, z: 10}
-  PlayerHealth: 100
+  _minBounds: {x: -6.5, y: -5.93, z: -20}
+  _maxBounds: {x: 12.5, y: 5, z: 10000}
   _secondsToDestruct: 1
   _totalBulletsSpawnPoints: 2
-  _spawnPoints: []
+  _spawnPoints:
+  - {fileID: 2730589501244763183}
+  - {fileID: 2730589501614200838}
 --- !u!54 &8029689854072668555
 Rigidbody:
   m_ObjectHideFlags: 0

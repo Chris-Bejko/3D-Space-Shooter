@@ -17,8 +17,4 @@ MonoBehaviour:
   - {fileID: 6119080285226752489, guid: cce8399001ceb9a4ab3035b579b174bb, type: 3}
   - {fileID: 6119080285226752489, guid: cce8399001ceb9a4ab3035b579b174bb, type: 3}
   TotalEnemies: 3
-  EnemySpawnPoint:
-  - {fileID: 8591626123116569046, guid: 2f5e03caf5c6e4748873639408684975, type: 3}
-  - {fileID: 9189626647483798892, guid: 2b9caba9279c45940b3e3a9f3205ed12, type: 3}
-  - {fileID: 3482367725203896610, guid: f4cc13faefb5ef74181ecbaa0502372c, type: 3}
-  TimeBetweenSpawns: 0
+  TimeBetweenSpawns: 0.2

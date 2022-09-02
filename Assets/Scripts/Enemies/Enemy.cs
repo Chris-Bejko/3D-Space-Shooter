@@ -13,21 +13,31 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField]
     private Transform[] firingPoints;
 
+    [SerializeField]
+    private int scoreToAdd;
+
     private Transform _player;
 
     private int _health;
 
     private BulletParent _bulletParent;
 
+    public int ID;
+
     private void Awake()
     {
-        _player = GameManager.Instance.player.transform;
         _health = _thisData.Health;
         SetBulletParent(BulletParent.Enemy);
     }
 
     private void OnEnable()
     {
+        if (GameManager.Instance)
+            _player = GameManager.Instance.player.transform;
+
+        if (!_player)
+            return;
+
         StartCoroutine(Move());
         StartCoroutine(Fire());
     }
@@ -49,9 +59,6 @@ public class Enemy : MonoBehaviour, IDamageable
                 return;
 
             damageable.TakeDamage(_thisData.CollisionDamage);
-            
-            if (damageable.GetHealth() <= 0)
-                damageable.Destruct();
         }
 
         Destruct();
@@ -66,6 +73,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private IEnumerator DestroyShip()
     {
+        GameManager.Instance.UiManager.GameUI.AddScore(scoreToAdd);
         ///To-do: Play animations
         yield return new WaitForSeconds(_timeForDestruction);
         gameObject.SetActive(false);
@@ -79,7 +87,9 @@ public class Enemy : MonoBehaviour, IDamageable
     public void TakeDamage(int damage)
     {
         _health -= damage;
-    }
+        if(_health <= 0) 
+            Destruct(); 
+    }   
 
     public BulletParent GetBulletParent()
     {
@@ -116,7 +126,7 @@ public class Enemy : MonoBehaviour, IDamageable
             GameObject temp = null;
             for (int i = 0; i < firingPoints.Length; i++)
             {
-                temp = GameManager.Instance.bulletsPool.GetPooledObject();
+                temp = GameManager.Instance.BulletsPool.GetPooledObject();
                 temp.transform.position = firingPoints[i].position;
                 temp.GetComponent<Bullet>().SetBulletParent(_bulletParent);
                 temp.SetActive(true);

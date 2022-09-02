@@ -20,13 +20,17 @@ public class Bullet : MonoBehaviour, IDamageable
     [SerializeField]
     private float _timeToDisableAfterNoCollision;
 
+    [SerializeField]
+    private AudioClip _bulletShootClip;
+
     private int _bulletHealth = 10;
 
     private BulletParent _bulletParent;
-
-
     private void OnEnable()
     {
+        if (GameManager.Instance.gameState != GameManager.GameState.Playing)
+            return;
+
         StartCoroutine(Shoot());
     }
 
@@ -36,7 +40,11 @@ public class Bullet : MonoBehaviour, IDamageable
             _rigidbody.velocity = -Vector3.forward * _bulletForce;
         else
             _rigidbody.velocity = Vector3.forward * _bulletForce;
+
+        GameManager.Instance.AudioManager.PlayInGameSound(_bulletShootClip);
+
         yield return new WaitForSeconds(_timeToDisableAfterNoCollision);
+
         if (gameObject.activeInHierarchy)
             gameObject.SetActive(false);
     }
@@ -53,9 +61,6 @@ public class Bullet : MonoBehaviour, IDamageable
                 return;
 
             damageable.TakeDamage(_bulletDamage);
-
-            if (damageable.GetHealth() <= 0)
-                damageable.Destruct();
         }
 
         TakeDamage(_bulletHealth);

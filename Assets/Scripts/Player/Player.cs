@@ -35,24 +35,43 @@ public class Player : MonoBehaviour, IDamageable
 
     #region Unity Functions
 
+
+    private void OnEnable()
+    {
+        GameManager.OnGameStateChanged += OnGameStateChanged;
+    }
+    private void OnDisable()
+    {
+    }
+
     private void Awake()
     {
         SetBulletParent(BulletParent.Player);
     }
     private void Update()
     {
-        if (GameManager.Instance.gameState == GameManager.GameState.Paused)
+        if (GameManager.Instance.gameState != GameManager.GameState.Playing)
             return;
 
+
+        gameObject.SetActive(true);
         GetInput();
         Shoot();
     }
 
     private void FixedUpdate()
     {
+        if (GameManager.Instance.gameState != GameManager.GameState.Playing)
+            return;
+
         Move();
     }
 
+
+    public void OnGameStateChanged(GameManager.GameState newState)
+    {
+        gameObject.SetActive(newState == GameManager.GameState.Playing);
+    }
     #endregion
 
     #region Movement
@@ -75,6 +94,9 @@ public class Player : MonoBehaviour, IDamageable
     public void TakeDamage(int damage)
     {
         PlayerHealth -= damage;
+        GameManager.Instance.UiManager.GameUI.UpdatePlayerHealth(PlayerHealth);
+        if (PlayerHealth <= 0)
+            Destruct();
     }
 
     public int GetHealth()
@@ -103,7 +125,7 @@ public class Player : MonoBehaviour, IDamageable
         {
             StartCoroutine(FireCoroutine());
         }
-        else if(Input.GetKeyUp(KeyCode.Space))
+        else if (Input.GetKeyUp(KeyCode.Space))
         {
             StopAllCoroutines();
         }
@@ -116,7 +138,7 @@ public class Player : MonoBehaviour, IDamageable
             GameObject temp = null;
             for (int i = 0; i < _totalBulletsSpawnPoints; i++)
             {
-                temp = GameManager.Instance.bulletsPool.GetPooledObject();
+                temp = GameManager.Instance.BulletsPool.GetPooledObject();
                 temp.transform.position = _spawnPoints[i].position;
                 temp.GetComponent<Bullet>().SetBulletParent(_bulletParent);
                 temp.SetActive(true);
