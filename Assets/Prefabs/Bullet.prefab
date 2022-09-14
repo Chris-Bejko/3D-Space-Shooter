@@ -116,7 +116,7 @@ MonoBehaviour:
   TimeBetweenSameShot: 0
   _rigidbody: {fileID: 9073272029309952099}
   _bulletForce: 100
-  _bulletDamage: 50
+  _bulletDamage: 10
   _timeToDisableAfterNoCollision: 4
   _bulletShootClip: {fileID: 8300000, guid: 513bc41163760d445b4fad7360c25f58, type: 3}
 --- !u!54 &9073272029309952099

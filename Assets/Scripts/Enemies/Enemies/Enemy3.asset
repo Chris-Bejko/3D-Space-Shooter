@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MoveSpeed: 50
   Health: 105
-  CollisionDamage: 55
+  CollisionDamage: 8
   FiringDistance: 105
   FiringCooldown: 1.3
