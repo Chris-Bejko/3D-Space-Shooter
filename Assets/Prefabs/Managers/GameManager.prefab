@@ -57,7 +57,7 @@ MonoBehaviour:
   WaveManager: {fileID: 2505406194909272668}
   UiManager: {fileID: 2505406193259361432}
   AudioManager: {fileID: 2505406193232747494}
-  gameState: 0
+  gameState: 3
   previousGameState: 0
   player: {fileID: 0}
   SpawnPoints:

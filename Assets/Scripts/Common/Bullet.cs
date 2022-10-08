@@ -26,10 +26,13 @@ public class Bullet : MonoBehaviour, IDamageable
     private int _bulletHealth = 10;
 
     private BulletParent _bulletParent;
+
     private void OnEnable()
     {
         if (GameManager.Instance.gameState != GameManager.GameState.Playing)
             return;
+
+        Debug.LogError(GameManager.Instance.gameState);
 
         StartCoroutine(Shoot());
     }
