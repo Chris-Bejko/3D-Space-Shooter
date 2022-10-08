@@ -108,6 +108,7 @@ public class GameManager : MonoBehaviour
         if(score > Highscore)
         {
             UiManager.MainMenuUI.UpdateHighscoreVisuals(score);
+            Highscore = score;
             PlayerPrefs.SetInt("Highscore", score);
         }
     }
