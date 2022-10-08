@@ -32,8 +32,6 @@ public class Bullet : MonoBehaviour, IDamageable
         if (GameManager.Instance.gameState != GameManager.GameState.Playing)
             return;
 
-        Debug.LogError(GameManager.Instance.gameState);
-
         StartCoroutine(Shoot());
     }
 
