@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Enemy2
   m_EditorClassIdentifier: 
   MoveSpeed: 55
-  Health: 100
+  Health: 35
   CollisionDamage: 7
   FiringDistance: 105
   FiringCooldown: 1.7
